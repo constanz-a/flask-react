@@ -1,19 +1,20 @@
-const CardProduct = ({ producto }) => {
+// components/ProductoCard.jsx
+import React from 'react';
+
+const ProductoCard = ({ producto, onAgregar }) => {
   return (
-    <div className="border p-4 rounded shadow hover:shadow-lg transition">
-      <h2 className="text-lg font-semibold">{producto.nombreProducto}</h2>
-      <p className="text-gray-600">{producto.descripcionProducto}</p>
-      <p className="mt-2 font-bold">${producto.precioProducto}</p>
-      <p className="text-sm text-gray-500">Stock: {producto.stockProducto}</p>
-      {producto.imagen_url && (
-        <img
-          src={producto.imagen_url}
-          alt={producto.nombreProducto}
-          className="mt-2 w-full h-40 object-cover rounded"
-        />
-      )}
+    <div className="border p-4 rounded shadow">
+      <h3 className="text-lg font-bold">{producto.nombreProducto}</h3>
+      <p>{producto.descripcionProducto}</p>
+      <p>Precio: ${producto.precioProducto}</p>
+      <button
+        className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
+        onClick={() => onAgregar(producto.id)}
+      >
+        Agregar al carrito
+      </button>
     </div>
   );
 };
 
-export default CardProduct;
+export default ProductoCard;

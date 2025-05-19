@@ -11,6 +11,10 @@ import Ventas from "./pages/ventas";
 import Login from "./pages/login";
 import Carrito from "./pages/carrito";
 import Seleccion from "./pages/seleccion";
+import OrdenConfirmadaPage from "./pages/ordenConfirmada";
+import OrdenEnviadaPage from "./pages/ordenEnviada";
+import CrearProductoPage from "./pages/crearProducto";
+import EditarProductoPage from "./pages/editarProducto";
 
 function App() {
   return (
@@ -27,6 +31,10 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/carrito" element={<Carrito />} />
           <Route path="/seleccion" element={<Seleccion />} />
+          <Route path="/ordenConfirmada/:ordenId" element={<OrdenConfirmadaPage />} />
+          <Route path="/ordenEnviada/:orden_id" element={<OrdenEnviadaPage />} />
+          <Route path="/crearProducto" element={<CrearProductoPage />} />
+          <Route path="/productos/editar/:id" element={<EditarProductoPage />} />
         </Routes>
 
       </div>
