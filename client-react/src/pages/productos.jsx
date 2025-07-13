@@ -1,23 +1,26 @@
 import { useEffect, useState } from "react";
-import CardProduct from "../components/productCard";
+import ProductoCardEditable from "../components/productoCardEdit";
 
-const Home = () => {
+const Productos = () => {
   const [productos, setProductos] = useState([]);
 
   useEffect(() => {
     fetch("http://localhost:5000/productos")
-      .then((response) => response.json())  // Convierte la respuesta a JSON
-      .then((data) => setProductos(data.productos))  // Asigna los productos a tu estado
+      .then((response) => response.json())
+      .then((data) => setProductos(data.productos))
       .catch((error) => console.error("Error fetching productos:", error));
   }, []);
 
   return (
-    <div>
-      {productos.map((producto) => (
-        <CardProduct key={producto.id} producto={producto} />
-      ))}
-    </div>
+   <div className="p-6 max-w-4xl mx-auto">
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
+    {productos.map((producto) => (
+      <ProductoCardEditable key={producto.id} producto={producto} />
+    ))}
+  </div>
+</div>
+
   );
 };
 
-export default Home;
+export default Productos;

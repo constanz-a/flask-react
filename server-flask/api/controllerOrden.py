@@ -10,7 +10,7 @@ def crear_orden():
     data = request.get_json()
 
     try:
-        cliente_id = int(data.get('cliente_id'))  # 🔥 convertir a int
+        cliente_id = int(data.get('cliente_id'))
     except (TypeError, ValueError):
         return jsonify({'error': 'cliente_id inválido'}), 400
 
@@ -39,8 +39,8 @@ def crear_orden():
         estado='pendiente'
     )
     db.session.add(orden)
-    db.session.flush()  # para obtener el ID antes de usarlo
-
+    db.session.flush()
+    
     for item in carrito_items:
         print("Procesando producto:", item.producto_id)
         detalle = DetalleOrden(
@@ -101,6 +101,9 @@ def listar_ordenes():
         resultado.append({
             'id': orden.id,
             'estado': orden.estado,
-            # agrega aquí otros campos que quieras mostrar, como fecha, cliente, etc.
         })
     return jsonify(resultado), 200
+@bp_ordenes.route('/ordenes/aceptadas', methods=['GET'])
+def obtener_ordenes_aceptadas():
+    ordenes = Orden.query.filter_by(estado='aceptada').all()
+    return jsonify([orden.serialize() for orden in ordenes])

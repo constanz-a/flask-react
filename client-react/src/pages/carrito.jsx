@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { cargarCarrito, eliminarDelCarrito } from '../services/carritoService'; // Asegúrate de importar cargarCarrito
+import { cargarCarrito, eliminarDelCarrito } from '../services/carritoService';
 import { crearOrden } from '../services/ordenService';
 import { useNavigate } from 'react-router-dom';
-import Carrito from '../components/carrito'; // Importamos el componente Carrito
+import Carrito from '../components/carrito';
+import { crearTransaccionWebpay } from '../services/transbankService';
 
 const CarritoPage = () => {
   const [carrito, setCarrito] = useState([]);
@@ -13,7 +14,7 @@ const CarritoPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedClienteId = localStorage.getItem('clienteId');
+    const storedClienteId = localStorage.getItem('id');
     if (storedClienteId) {
       setClienteId(storedClienteId);
     } else {
@@ -21,46 +22,70 @@ const CarritoPage = () => {
     }
   }, [navigate]);
 
-  // Llamamos la función cargarCarrito importada para cargar los productos del carrito
   const cargarProductosDelCarrito = async () => {
     if (!clienteId) return;
     try {
-      const items = await cargarCarrito(clienteId); // Obtener los productos del carrito
-      setCarrito(items); // Guardamos los productos en el estado
+      const items = await cargarCarrito(clienteId);
+      setCarrito(items);
     } catch (error) {
       console.error('Error al cargar el carrito:', error);
     }
   };
 
   useEffect(() => {
-    if (clienteId) cargarProductosDelCarrito(); // Cargar el carrito si tenemos el clienteId
+    if (clienteId) cargarProductosDelCarrito();
   }, [clienteId]);
 
   const handleEliminar = async (itemId) => {
-    await eliminarDelCarrito(itemId); // Eliminar producto del carrito
-    await cargarProductosDelCarrito(); // Recargar el carrito después de eliminar
+    await eliminarDelCarrito(itemId);
+    await cargarProductosDelCarrito();
   };
 
   const total = carrito.reduce((sum, item) => sum + item.producto.precioProducto * item.cantidad, 0);
 
-const handleConfirmarOrden = async () => {
+  const handleConfirmarOrden = async () => {
   try {
     const res = await crearOrden({
       cliente_id: clienteId,
       tipo_entrega: tipoEntrega,
       direccion_envio: tipoEntrega === 'despacho' ? direccion : null,
     });
-    console.log('Respuesta de crearOrden:', res);
-    if (res.orden && res.orden.id) {
-      navigate(`/ordenEnviada/${res.orden.id}`);
-    } else {
+
+    if (!res.orden || !res.orden.id) {
       alert('No se pudo crear la orden');
+      return;
     }
+
+    const ordenId = res.orden.id;
+
+    const sessionId = `cliente-${clienteId}-${Date.now()}`;
+    const returnUrl = `http://localhost:5173/ordenConfirmada`;
+    const transaccion = await crearTransaccionWebpay(
+      `orden-${ordenId}`,
+      sessionId,
+      total,
+      returnUrl
+    );
+
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = transaccion.url;
+
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = "token_ws";
+    input.value = transaccion.token;
+    form.appendChild(input);
+
+    document.body.appendChild(form);
+    form.submit();
+
   } catch (error) {
-    alert('Error al crear la orden');
+    alert('Error al procesar el pago');
     console.error(error);
   }
 };
+
 
 
   return (

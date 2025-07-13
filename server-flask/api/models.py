@@ -119,7 +119,8 @@ class Orden(db.Model):
             'fecha': self.fecha.isoformat(),
             'tipo_entrega': self.tipo_entrega,
             'direccion_envio': self.direccion_envio,
-            'estado' :self.estado
+            'estado' :self.estado,
+            'detalles': [detalle.serialize() for detalle in self.detalles]
         }
 
 

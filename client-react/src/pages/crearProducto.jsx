@@ -22,7 +22,6 @@ const CrearProductoPage = () => {
     setError(null);
 
     try {
-      // Convertir precio y stock a número
       const producto = {
         ...form,
         precioProducto: parseFloat(form.precioProducto),

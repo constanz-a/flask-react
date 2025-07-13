@@ -1,5 +1,6 @@
 const API = 'http://localhost:5000';
 
+// loginService.js
 export const login = async (correo, password) => {
   try {
     const res = await fetch(`${API}/login`, {
@@ -9,18 +10,18 @@ export const login = async (correo, password) => {
     });
 
     if (!res.ok) {
-      // Si el servidor devuelve un error, obtenemos el mensaje de error
       const error = await res.json();
-      throw new Error(error.message || 'Credenciales incorrectas');
+      throw new Error(error.error || 'Credenciales incorrectas');
     }
 
     const data = await res.json();
-    
-    // Guardamos tanto el clienteId como el token en localStorage
-    localStorage.setItem('token', data.token);  // Guardamos el token
-    localStorage.setItem('clienteId', data.clienteId);  // Guardamos el clienteId
 
-    // Devolvemos los datos del login (incluyendo el clienteId y token)
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('id', data.id);
+    localStorage.setItem('nombre', data.nombre);
+    localStorage.setItem('tipo', data.tipo);
+    localStorage.setItem('rol', data.rol);
+
     return data;
   } catch (error) {
     console.error('Error en el login:', error);
@@ -28,10 +29,15 @@ export const login = async (correo, password) => {
   }
 };
 
+
 export const logout = () => {
-  localStorage.removeItem('token');  // Eliminar token al hacer logout
-  localStorage.removeItem('clienteId');  // Eliminar clienteId al hacer logout
+  localStorage.removeItem('token');
+  localStorage.removeItem('id');
+  localStorage.removeItem('nombre');
+  localStorage.removeItem('tipo');
+  localStorage.removeItem('rol');
 };
+
 
 export const registro = async (nombre, correo, password, direccion) => {
   try {
@@ -42,7 +48,6 @@ export const registro = async (nombre, correo, password, direccion) => {
     });
 
     if (!res.ok) {
-      // Si el servidor devuelve un error, obtenemos el mensaje de error
       const error = await res.json();
       throw new Error(error.message || 'Error al registrarse');
     }

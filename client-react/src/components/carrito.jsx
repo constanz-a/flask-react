@@ -1,4 +1,3 @@
-// src/components/Carrito.jsx
 import React from 'react';
 
 const Carrito = ({ carrito, handleEliminar }) => {
@@ -9,7 +8,7 @@ const Carrito = ({ carrito, handleEliminar }) => {
   return (
     <div className="space-y-4">
       {carrito.map((item) => (
-        <div key={item.id} className="border p-4 rounded flex justify-between items-center">
+        <div key={`${item.id}-${item.producto.id}`} className="border p-4 rounded flex justify-between items-center">
           <div>
             <h3 className="text-lg font-semibold">{item.producto.nombreProducto}</h3>
             <p>Cantidad: {item.cantidad}</p>

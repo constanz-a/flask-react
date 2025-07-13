@@ -1,13 +1,12 @@
 const API = 'http://localhost:5000';
 
-// Función para cargar el carrito
 export const cargarCarrito = async (clienteId) => {
   if (!clienteId) return;
   try {
     const res = await fetch(`${API}/carrito/${clienteId}`);
     if (!res.ok) throw new Error('Error al obtener el carrito');
     const items = await res.json();
-    console.log('Carrito recibido:', items); // Para depuración
+    console.log('Carrito recibido:', items);
     return items;
   } catch (error) {
     console.error('Error al cargar el carrito:', error);
@@ -15,7 +14,6 @@ export const cargarCarrito = async (clienteId) => {
   }
 };
 
-// Exporta las otras funciones necesarias
 export const eliminarDelCarrito = async (itemId) => {
   const res = await fetch(`${API}/carrito/${itemId}`, {
     method: 'DELETE'
@@ -35,5 +33,7 @@ export const agregarAlCarrito = async (clienteId, productoId, cantidad = 1) => {
     const error = await res.json();
     throw new Error(error.message || 'Error al agregar al carrito');
   }
+  console.log("Enviando al backend:", { cliente_id: clienteId, producto_id: productoId, cantidad });
   return res.json();
+  
 };

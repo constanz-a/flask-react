@@ -9,33 +9,42 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (event) => {
-  event.preventDefault();
+    event.preventDefault();
 
-  if (!correo || !password) {
-    setError('Por favor ingresa ambos, correo y contraseña');
-    return;
-  }
-
-  try {
-    const data = await login(correo, password);
-    const { clienteId, token } = data;
-
-    if (token && clienteId) {
-      // Guardamos en localStorage
-      localStorage.setItem('clienteId', clienteId);
-      localStorage.setItem('token', token);
-
-      // Luego navegamos a carrito
-      navigate('/carrito');
-    } else {
-      setError('Datos de autenticación inválidos');
+    if (!correo || !password) {
+      setError('Por favor ingresa ambos, correo y contraseña');
+      return;
     }
-  } catch (error) {
-    console.error('Error al iniciar sesión:', error);
-    setError(error.message || 'Error al iniciar sesión. Inténtalo nuevamente.');
-  }
-};
 
+    try {
+      const data = await login(correo, password);
+      const { token, id, nombre, tipo, rol } = data;
+
+      if (token) {
+        localStorage.setItem('token', token);
+        localStorage.setItem('id', id);
+        localStorage.setItem('nombre', nombre);
+        localStorage.setItem('tipo', tipo);
+        localStorage.setItem('rol', rol);
+
+        // Redirigir según tipo de usuario
+        if (tipo === 'cliente') {
+          navigate('/carrito'); // cliente va a su carrito
+        } else if (rol === 'admin') {
+          navigate('/'); // ejemplo para admin
+        } else if (rol === 'vendedor') {
+          navigate('/vendedor/pedidos'); // ejemplo para vendedor
+        } else {
+          navigate('/'); // fallback
+        }
+      } else {
+        setError('Datos de autenticación inválidos');
+      }
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+      setError(error.message || 'Error al iniciar sesión. Inténtalo nuevamente.');
+    }
+  };
 
   return (
     <div className="p-6">
@@ -45,9 +54,9 @@ const LoginPage = () => {
 
       <form onSubmit={handleLogin}>
         <div className="mb-4">
-          <label htmlFor="correo" className="block">Correo electrónico</label>
+          <label htmlFor="correo" className="block">Correo o usuario</label>
           <input
-            type="email"
+            type="text"
             id="correo"
             value={correo}
             onChange={(e) => setCorreo(e.target.value)}

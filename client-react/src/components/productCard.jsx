@@ -3,6 +3,7 @@ import React from 'react';
 
 const ProductoCard = ({ producto, onAgregar }) => {
   return (
+    <div className='container'>
     <div className="border p-4 rounded shadow">
       <h3 className="text-lg font-bold">{producto.nombreProducto}</h3>
       <p>{producto.descripcionProducto}</p>
@@ -13,6 +14,7 @@ const ProductoCard = ({ producto, onAgregar }) => {
       >
         Agregar al carrito
       </button>
+    </div>
     </div>
   );
 };

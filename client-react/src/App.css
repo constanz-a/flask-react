@@ -1,0 +1,137 @@
+:root {
+  --color-primario: #1F3B4D;         /* Azul oscuro */
+  --color-secundario: #F57C00;       /* Naranja construcción */
+  --color-acento: #FFC107;           /* Amarillo fuerte */
+  --color-fondo: #F5F5F5;            /* Fondo claro */
+  --color-texto: #212121;            /* Texto principal */
+  --color-borde: #BDBDBD;            /* Bordes suaves */
+}
+
+body {
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Componentes genéricos */
+.card {
+  background-color: white;
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.card h2 {
+  color: var(--color-primario);
+}
+
+.button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+
+.button.primario {
+  background-color: var(--color-secundario);
+  color: white;
+}
+
+.button.primario:hover {
+  background-color: #d65d00;
+}
+
+.button.secundario {
+  background-color: var(--color-acento);
+  color: #000;
+}
+
+.titulo-pagina {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--color-primario);
+  margin-bottom: 16px;
+}
+form {
+  max-width: 400px;
+  margin: 20px auto;
+  font-family: Arial, sans-serif;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
+}
+
+input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+input:focus {
+  border-color: #0074D9;
+  outline: none;
+}
+
+button {
+  background-color: var(--color-primario); /* azul que usaste en navbar */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--color-acento); /* hover más oscuro */
+}
+nput, textarea {
+  border: 1px solid #ccc;
+  padding: 8px 10px;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical; /* permite cambiar tamaño verticalmente */
+}
+
+/* Estilos para que el footer quede siempre abajo */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1; /* Esto hace que el contenido principal crezca y ocupe el espacio */
+}
+

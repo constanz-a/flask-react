@@ -1,4 +1,3 @@
-// components/DetalleOrden.jsx
 import React from 'react';
 
 const DetalleOrden = ({ orden }) => {
@@ -11,8 +10,8 @@ const DetalleOrden = ({ orden }) => {
       
       <h3 className="text-lg font-semibold mt-4 mb-2">Productos:</h3>
       <ul>
-        {orden.detalles.map((item, index) => (
-          <li key={index} className="mb-2">
+        {orden.detalles.map((item) => (
+          <li key={item.id} className="mb-2">
             <p><strong>{item.producto.nombreProducto}</strong></p>
             <p>Cantidad: {item.cantidad}</p>
             <p>Precio unitario: ${item.precio_unitario}</p>

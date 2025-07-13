@@ -1,32 +1,62 @@
 from flask import Blueprint, request, jsonify
 from werkzeug.security import check_password_hash
 import jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
+datetime.now(timezone.utc)
 from api import db
-from .models import Cliente
+from .models import Cliente, Usuario
 
 bp_auth = Blueprint('auth', __name__)
 
-SECRET_KEY = 'mi_clave_secreta'  # Cambia esto por una clave más segura en producción
+SECRET_KEY = 'mi_clave_secreta'
 
 @bp_auth.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-
-    email = data.get('correo')
+    identificador = data.get('correo')
     password = data.get('password')
 
-    if not email or not password:
-        return jsonify({'error': 'Correo y contraseña son requeridos'}), 400
+    if not identificador or not password:
+        return jsonify({'error': 'Identificador y contraseña son requeridos'}), 400
 
-    cliente = Cliente.query.filter_by(correo=email).first()
-    if not cliente or not cliente.check_password(password):
-        return jsonify({'error': 'Credenciales inválidas'}), 401
+    
+    cliente = Cliente.query.filter_by(correo=identificador).first()
+    if cliente and cliente.check_password(password):
+        token = jwt.encode({
+            'id': cliente.id,
+            'tipo': 'cliente',
+            'exp': datetime.utcnow() + timedelta(hours=1)
+        }, SECRET_KEY, algorithm='HS256')
 
-    # Generar token JWT
-    token = jwt.encode({'cliente_id': cliente.id, 'exp': datetime.utcnow() + timedelta(hours=1)}, SECRET_KEY, algorithm='HS256')
+        return jsonify({
+            'message': 'Login exitoso',
+            'token': token,
+            'id': cliente.id,
+            'nombre': cliente.nombre,
+            'tipo': 'cliente',
+            'rol': 'cliente'
+        })
 
-    return jsonify({'message': 'Login exitoso', 'token': token, 'clienteId': cliente.id})
+    usuario = Usuario.query.filter_by(usuario=identificador).first()
+    if usuario and usuario.check_password(password):
+        token = jwt.encode({
+            'id': usuario.id,
+            'tipo': 'usuario',
+            'rol': usuario.rol,
+            'exp': datetime.now(timezone.utc) + timedelta(hours=1)
+        }, SECRET_KEY, algorithm='HS256')
+
+        return jsonify({
+            'message': 'Login exitoso',
+            'token': token,
+            'id': usuario.id,
+            'nombre': usuario.nombre,
+            'tipo': 'usuario',
+            'rol': usuario.rol
+        })
+
+    return jsonify({'error': 'Credenciales inválidas'}), 401
+
 
 @bp_auth.route('/registro', methods=['POST'])
 def registro():

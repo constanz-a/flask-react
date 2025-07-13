@@ -1,7 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "../src/components/navbar";
-
+import Footer from "./components/footer";
+import './App.css';
 // Páginas (crear componentes vacíos por ahora)
 import Inicio from "./pages/inicio";
 import Productos from "./pages/productos";
@@ -15,6 +16,8 @@ import OrdenConfirmadaPage from "./pages/ordenConfirmada";
 import OrdenEnviadaPage from "./pages/ordenEnviada";
 import CrearProductoPage from "./pages/crearProducto";
 import EditarProductoPage from "./pages/editarProducto";
+import EditarProductoSinStockPage from "./pages/editarproductosinstock";
+import OrdenesAceptadasPage from "./pages/OrdenesAceptadasPage";
 
 function App() {
   return (
@@ -35,9 +38,11 @@ function App() {
           <Route path="/ordenEnviada/:orden_id" element={<OrdenEnviadaPage />} />
           <Route path="/crearProducto" element={<CrearProductoPage />} />
           <Route path="/productos/editar/:id" element={<EditarProductoPage />} />
+          <Route path="/productos/editarSinStock/:id" element={<EditarProductoSinStockPage />} />
+          <Route path="/ventas/ordenes-aceptadas" element={<OrdenesAceptadasPage />} />
         </Routes>
-
       </div>
+      <Footer />
     </Router>
   );
 }

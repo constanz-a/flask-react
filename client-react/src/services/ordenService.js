@@ -33,3 +33,8 @@ export const crearOrden = async ({ cliente_id, tipo_entrega, direccion_envio }) 
 
   return data;
 };
+export const obtenerOrdenesAceptadas = async () => {
+  const res = await fetch('http://localhost:5000/ordenes/aceptadas');
+  if (!res.ok) throw new Error('Error al obtener órdenes aceptadas');
+  return await res.json();
+};

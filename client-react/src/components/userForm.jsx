@@ -7,7 +7,7 @@ const UserForm = ({ onSubmit }) => {
     rut: '',
     usuario: '',
     rol: '',
-    password: '', // Asegúrate de incluir la contraseña
+    password: '',
   });
 
   const handleChange = (e) => {
@@ -22,7 +22,7 @@ const UserForm = ({ onSubmit }) => {
     e.preventDefault();
     try {
       const response = await createUsuario(formData);
-      onSubmit(response.usuario); // Si todo es exitoso, pasa el usuario creado a la función 'onSubmit'
+      onSubmit(response.usuario); 
       alert("Usuario creado con éxito");
     } catch (error) {
       console.error("Error al crear el usuario:", error);

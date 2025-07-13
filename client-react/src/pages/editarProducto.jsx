@@ -30,7 +30,7 @@ const EditarProductoPage = () => {
     const { name, value } = e.target;
     setProducto((prev) => ({
       ...prev,
-      [name]: name === 'precioProducto' || name === 'stockProducto' ? Number(value) : value,
+      [name]: name === 'stockProducto' ? Number(value) : value,
     }));
   };
 
@@ -42,15 +42,15 @@ const EditarProductoPage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(producto),
+        body: JSON.stringify({ stockProducto: producto.stockProducto }),
       });
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.message || 'Error al actualizar producto');
+        throw new Error(data.message || 'Error al actualizar el stock');
       }
 
-      alert('Producto actualizado con éxito');
+      alert('Stock actualizado con éxito');
       navigate('/productos');
     } catch (e) {
       alert('Error: ' + e.message);
@@ -63,7 +63,7 @@ const EditarProductoPage = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Editar Producto</h1>
+      <h1 className="text-2xl font-bold mb-4">Editar Stock del Producto</h1>
       <form onSubmit={handleSubmit} className="grid gap-4 max-w-md">
         <div>
           <label className="block font-semibold">Nombre:</label>
@@ -71,9 +71,8 @@ const EditarProductoPage = () => {
             type="text"
             name="nombreProducto"
             value={producto.nombreProducto}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-            required
+            disabled
+            className="w-full border p-2 rounded bg-gray-100"
           />
         </div>
 
@@ -83,8 +82,8 @@ const EditarProductoPage = () => {
             type="text"
             name="descripcionProducto"
             value={producto.descripcionProducto}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
+            disabled
+            className="w-full border p-2 rounded bg-gray-100"
           />
         </div>
 
@@ -94,9 +93,8 @@ const EditarProductoPage = () => {
             type="number"
             name="precioProducto"
             value={producto.precioProducto}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-            required
+            disabled
+            className="w-full border p-2 rounded bg-gray-100"
           />
         </div>
 
@@ -118,8 +116,8 @@ const EditarProductoPage = () => {
             type="text"
             name="imagen_url"
             value={producto.imagen_url || ''}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
+            disabled
+            className="w-full border p-2 rounded bg-gray-100"
           />
         </div>
 

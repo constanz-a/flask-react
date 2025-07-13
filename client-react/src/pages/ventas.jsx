@@ -3,11 +3,11 @@ import { obtenerOrdenesPendientes, actualizarEstadoOrden } from '../services/ord
 
 const VendedorPage = () => {
   const [ordenes, setOrdenes] = useState([]);
-  const [detalles, setDetalles] = useState({}); // Para guardar detalles por ordenId
+  const [detalles, setDetalles] = useState({}); 
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 
-  // Carga las órdenes y sus detalles
+
   const cargarOrdenesConDetalle = async () => {
     try {
       setCargando(true);
@@ -16,7 +16,6 @@ const VendedorPage = () => {
       const ordenesPendientes = await obtenerOrdenesPendientes();
       setOrdenes(ordenesPendientes);
 
-      // Cargar detalles para todas las órdenes en paralelo
       const detallesRes = await Promise.all(
         ordenesPendientes.map(async (orden) => {
           const res = await fetch(`http://localhost:5000/orden/${orden.id}`);
@@ -25,7 +24,6 @@ const VendedorPage = () => {
         })
       );
 
-      // Guardar detalles en un objeto { ordenId: detalle }
       const detallesMap = {};
       ordenesPendientes.forEach((orden, i) => {
         detallesMap[orden.id] = detallesRes[i];

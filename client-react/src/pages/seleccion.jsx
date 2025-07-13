@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { agregarAlCarrito } from '../services/carritoService';
+import { obtenerValorDolar } from '../services/dolarService';  // Importa el servicio
 
 const API = 'http://localhost:5000';
 
 const ProductosPage = () => {
   const [productos, setProductos] = useState([]);
   const [clienteId, setClienteId] = useState(null);
+  const [dolar, setDolar] = useState(null);  // Estado para el dólar
 
   useEffect(() => {
-    // Obtener clienteId guardado en localStorage
-    const storedClienteId = localStorage.getItem('clienteId');
+    const storedClienteId = localStorage.getItem('id');
     if (storedClienteId) {
-      setClienteId(storedClienteId);
+      setClienteId(Number(storedClienteId));
     }
   }, []);
 
+  // Traer productos
   useEffect(() => {
     const fetchProductos = async () => {
       try {
@@ -27,6 +29,16 @@ const ProductosPage = () => {
     };
 
     fetchProductos();
+  }, []);
+
+  // Traer valor del dólar
+  useEffect(() => {
+    obtenerValorDolar()
+      .then(setDolar)
+      .catch(err => {
+        console.error('Error al obtener el dólar:', err);
+        setDolar(null);
+      });
   }, []);
 
   const handleAgregar = async (productoId) => {
@@ -47,14 +59,22 @@ const ProductosPage = () => {
     <div style={{ padding: '2rem' }}>
       <h1>Productos</h1>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
-        {productos.map((producto) => (
-          <div key={producto.id} style={{ border: '1px solid #ccc', padding: '1rem', width: '200px' }}>
-            <h3>{producto.nombreProducto}</h3>
-            <p>{producto.descripcionProducto}</p>
-            <p><strong>${producto.precioProducto}</strong></p>
-            <button onClick={() => handleAgregar(producto.id)}>Agregar al carrito</button>
-          </div>
-        ))}
+        {productos.map((producto) => {
+          // Conversión a dólar con 2 decimales, o mostrar '...' si no hay dato
+          const precioDolares = dolar
+            ? (producto.precioProducto / dolar).toFixed(2)
+            : '...';
+
+          return (
+            <div key={producto.id} style={{ border: '1px solid #ccc', padding: '1rem', width: '200px' }}>
+              <h3>{producto.nombreProducto}</h3>
+              <p>{producto.descripcionProducto}</p>
+              <p><strong>${producto.precioProducto} CLP</strong></p>
+              <p><em>${precioDolares} USD</em></p>
+              <button onClick={() => handleAgregar(producto.id)}>Agregar al carrito</button>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

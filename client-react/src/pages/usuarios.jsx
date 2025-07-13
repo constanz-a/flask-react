@@ -11,14 +11,15 @@ import UserForm from '../components/userForm';
 const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [usuarioEdit, setUsuarioEdit] = useState(null);
+  const [mostrarFormCrear, setMostrarFormCrear] = useState(false);
+  const [mostrarListaUsuarios, setMostrarListaUsuarios] = useState(false); // estado nuevo para mostrar/ocultar listado
   const [loading, setLoading] = useState(true);
 
-  // Obtener todos los usuarios al cargar
   useEffect(() => {
     const fetchUsuarios = async () => {
       try {
         const data = await getUsuarios();
-        setUsuarios(data || []); // Evitar errores si data es undefined
+        setUsuarios(data || []);
       } catch (error) {
         console.error("Error al cargar los usuarios:", error);
       } finally {
@@ -28,17 +29,16 @@ const Usuarios = () => {
     fetchUsuarios();
   }, []);
 
-  // Crear usuario
   const handleCreate = async (formData) => {
     try {
       const newUser = await createUsuario(formData);
       setUsuarios((prev) => [...prev, newUser.usuario]);
+      setMostrarFormCrear(false);
     } catch (error) {
       console.error("Error al crear el usuario:", error);
     }
   };
 
-  // Actualizar usuario
   const handleEdit = async (formData) => {
     try {
       const updatedUser = await updateUsuario(usuarioEdit.id, formData);
@@ -53,7 +53,6 @@ const Usuarios = () => {
     }
   };
 
-  // Eliminar usuario
   const handleDelete = async (id) => {
     try {
       await deleteUsuario(id);
@@ -63,47 +62,74 @@ const Usuarios = () => {
     }
   };
 
-  // Cargar usuario para edición
   const handleEditForm = (id) => {
     const userToEdit = usuarios.find((user) => user.id === id);
     if (userToEdit) {
       setUsuarioEdit(userToEdit);
+      setMostrarFormCrear(false);
     }
   };
 
-  // Cancelar edición
   const handleCancelEdit = () => {
     setUsuarioEdit(null);
+  };
+
+  const toggleFormCrear = () => {
+    setUsuarioEdit(null);
+    setMostrarFormCrear((prev) => !prev);
+  };
+
+  const toggleListaUsuarios = () => {
+    setMostrarListaUsuarios((prev) => !prev);
   };
 
   return (
     <div className="usuarios-container">
       <h1>Gestión de Usuarios</h1>
 
-      {/* Formulario de creación o edición */}
-      <UserForm
-        usuario={usuarioEdit}
-        onSubmit={usuarioEdit ? handleEdit : handleCreate}
-        onCancel={usuarioEdit ? handleCancelEdit : null}
-      />
+      <button
+        className="mb-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        onClick={toggleFormCrear}
+      >
+        {mostrarFormCrear ? 'Cerrar formulario' : 'Crear usuario'}
+      </button>
 
-      {/* Listado de usuarios */}
-      <div className="user-list">
-        {loading ? (
-          <p>Cargando usuarios...</p>
-        ) : usuarios.length > 0 ? (
-          usuarios.map((usuario) => (
-            <UserCard
-              key={usuario.id}
-              usuario={usuario}
-              onEdit={handleEditForm}
-              onDelete={handleDelete}
-            />
-          ))
-        ) : (
-          <p>No hay usuarios registrados.</p>
-        )}
-      </div>
+      {(mostrarFormCrear || usuarioEdit) && (
+        <UserForm
+          usuario={usuarioEdit}
+          onSubmit={usuarioEdit ? handleEdit : handleCreate}
+          onCancel={() => {
+            if (usuarioEdit) handleCancelEdit();
+            else setMostrarFormCrear(false);
+          }}
+        />
+      )}
+
+      <button
+        className="mb-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        onClick={toggleListaUsuarios}
+      >
+        {mostrarListaUsuarios ? 'Ocultar usuarios' : 'Mostrar usuarios'}
+      </button>
+
+      {mostrarListaUsuarios && (
+        <div className="user-list">
+          {loading ? (
+            <p>Cargando usuarios...</p>
+          ) : usuarios.length > 0 ? (
+            usuarios.map((usuario) => (
+              <UserCard
+                key={usuario.id}
+                usuario={usuario}
+                onEdit={handleEditForm}
+                onDelete={handleDelete}
+              />
+            ))
+          ) : (
+            <p>No hay usuarios registrados.</p>
+          )}
+        </div>
+      )}
     </div>
   );
 };
